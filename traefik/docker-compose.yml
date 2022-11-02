@@ -7,6 +7,10 @@ services:
     - --api.insecure=true
     - --providers.docker=true
     - --entrypoints.websecure.address=:443
+    - --entrypoints.web.address=:80
+    - --entrypoints.web.http.redirections.entryPoint.to=websecure
+    - --entrypoints.web.http.redirections.entryPoint.scheme=https
+    - --entrypoints.web.http.redirections.entrypoint.permanent=true
     - --certificatesresolvers.myresolver.acme.tlschallenge=true
     - --certificatesresolvers.myresolver.acme.email=djtresk@gmail.com
     - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
