@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./:/var/www:delegated
+      - ./_docker/nginx/conf.d:/etc/nginx/conf.d
+    labels:
+      - "traefik.http.routers.nginx.rule=Host(`api.localhost`)"
+      - "traefik.port=80"
+      - "traefik.docker.network=web"
+    depends_on:
+      - app
+    container_name: project_nginx
+    networks:
+      - web
+      - internal
+
+  app:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www:delegated
+    depends_on:
+      - db
+    container_name: project_app
+    networks:
+      - web
+
+  db:
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: project_db
+    networks:
+      - internal
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
