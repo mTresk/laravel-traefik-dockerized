@@ -10,6 +10,8 @@ services:
       - "traefik.http.routers.nginx.rule=Host(`api.localhost`)"
       - "traefik.port=80"
       - "traefik.docker.network=web"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls.certresolver=myresolver"
     depends_on:
       - app
     container_name: project_nginx
